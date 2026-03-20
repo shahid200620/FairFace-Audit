@@ -1,0 +1,9 @@
+.git
+.gitignore
+__pycache__
+*.pyc
+data
+artifacts
+results
+submission
+node_modules

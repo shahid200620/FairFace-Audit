@@ -1,0 +1,6 @@
+data/
+artifacts/
+results/
+submission/
+__pycache__/
+*.pyc

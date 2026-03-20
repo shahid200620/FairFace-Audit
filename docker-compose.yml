@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: face_audit_app
+    volumes:
+      - .:/app
+    command: python main.py
+    healthcheck:
+      test: ["CMD", "python", "-c", "import torch; import cv2; print('ok')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
