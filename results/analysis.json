@@ -1,0 +1,12 @@
+{
+  "most_biased_pairing": {
+    "group_1": "Female_60+_Dark",
+    "group_2": "Male_20-39_Light",
+    "metric": "frr_disparity",
+    "value": 0.15
+  },
+  "hypothesized_causes": {
+    "data_level": "There are fewer samples of older individuals with darker skin tone in the dataset which can affect learning.",
+    "model_level": "The model may have learned features that work better for majority groups and not generalize well to all groups."
+  }
+}

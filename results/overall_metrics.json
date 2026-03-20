@@ -1,0 +1,10 @@
+{
+  "initial_model": {
+    "accuracy": 0.75,
+    "threshold": 0.5
+  },
+  "mitigated_model": {
+    "accuracy": 0.72,
+    "threshold": 0.6
+  }
+}
