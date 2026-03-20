@@ -23,18 +23,18 @@ model.load_state_dict(torch.load("artifacts/model.pt", map_location=device))
 model.eval()
 
 def get_info(name):
-    parts = name.split("_")
-    age = int(parts[0])
-    gender = "Male" if parts[1] == "0" else "Female"
-    race = int(parts[2])
+    p = name.split("_")
+    age = int(p[0])
+    gender = "Male" if p[1] == "0" else "Female"
+    race = int(p[2])
     return age, gender, race
 
-def age_group(age):
-    if age <= 19:
+def age_group(a):
+    if a <= 19:
         return "0-19"
-    elif age <= 39:
+    elif a <= 39:
         return "20-39"
-    elif age <= 59:
+    elif a <= 59:
         return "40-59"
     else:
         return "60+"
@@ -60,12 +60,19 @@ def get_pair():
 
 threshold = 0.5
 
-results = {}
+stats = {}
 
 tp = fp = tn = fn = 0
 
-for _ in range(500):
+for _ in range(800):
     f1, f2, x1, x2, same = get_pair()
+
+    age1, g1, r1 = get_info(f1)
+
+    key = g1 + "_" + age_group(age1) + "_" + tone_group(r1)
+
+    if key not in stats:
+        stats[key] = {"tp":0,"fp":0,"tn":0,"fn":0}
 
     x1 = x1.unsqueeze(0).to(device)
     x2 = x2.unsqueeze(0).to(device)
@@ -79,20 +86,31 @@ for _ in range(500):
     pred = sim > threshold
 
     if same and pred:
+        stats[key]["tp"] += 1
         tp += 1
     elif not same and pred:
+        stats[key]["fp"] += 1
         fp += 1
     elif not same and not pred:
+        stats[key]["tn"] += 1
         tn += 1
     else:
+        stats[key]["fn"] += 1
         fn += 1
 
-far = fp / (fp + tn + 1e-6)
-frr = fn / (fn + tp + 1e-6)
+results = {}
+
+for k,v in stats.items():
+    far = v["fp"] / (v["fp"] + v["tn"] + 1e-6)
+    frr = v["fn"] / (v["fn"] + v["tp"] + 1e-6)
+    results[k] = {"far": float(far), "frr": float(frr)}
+
+overall_far = fp / (fp + tn + 1e-6)
+overall_frr = fn / (fn + tp + 1e-6)
 
 results["overall"] = {
-    "far": float(far),
-    "frr": float(frr)
+    "far": float(overall_far),
+    "frr": float(overall_frr)
 }
 
 with open("results/initial_audit.json", "w") as f:
